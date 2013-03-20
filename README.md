@@ -5,12 +5,13 @@ Based on the dylon (https://github.com/dylon) implementation of Levenshtein Auto
 
 Installation:
 
-``` npm install node-levenshtein-automata
+```javascript
+npm install node-levenshtein-automata
 ```
 
 Basic usage:
 
-```
+```javascript
 var lev = require('node-levenshtein-automata');
 
 var idx = new lev({algorithm: 'transposition'})
