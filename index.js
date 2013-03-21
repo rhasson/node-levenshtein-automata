@@ -37,14 +37,16 @@
 #
 */
 
-var lev = require('./lib/levenshtein');
-var Dawg = require('./lib/dawg');
+var lev = require('./lib/levenshtein')
+	, Dawg = require('./lib/dawg')
+	, stop_words = require('./lib/stop_words');
+
 
 function Lev (args) {
 	args = (typeof args === 'object') ? args : {};
 
 	this._algorithm = args.algorithm || 'transposition';
-	this._distance = args.distance || 2;
+	this._distance = args.distance || 1;
 	this._sort_matches = args.sort_matches || true;
 	this._include_distance = args.include_distance || true;
 	this._case_insensitive = args.case_insensitive || true;
@@ -56,15 +58,23 @@ module.exports = Lev;
 Lev.prototype._levenshtein = lev;
 
 Lev.prototype.index = function(ary, id) {
-	var _this = this, d;
+	var _this = this, d, x;
 
 	if (ary instanceof Array) {
 		ary.forEach(function(item) {
-			d = new Dawg(item.split(' '));
+			x = item.toLowerCase().split(' ');
+			x = x.filter(function(i) {
+				return stop_words(i);
+			});
+			d = new Dawg(x);
 			_this._store.push({dawg: d, id: id || 0});
 		});
 	} else if (typeof ary === 'string') {
-		d = new Dawg(ary.split(' '));
+		x = ary.toLowerCase().split(' ');
+		x = x.filter(function(i) {
+			return stop_words(i);
+		});
+		d = new Dawg(x);
 		_this._store.push({dawg: d, id: id || 0});
 	}
 }
@@ -74,6 +84,13 @@ Lev.prototype.search = function(q, distance, cb) {
 	if (typeof distance === 'function') {
 		cb = distance;
 		distance = _this._distance;
+	}
+
+	q = q.toLowerCase().split(' ');
+	if (q.length > 1) {
+		q = q.filter(function(i) {
+			return stop_words(i);
+		});
 	}
 
 	process.nextTick(function() {
@@ -88,7 +105,7 @@ Lev.prototype.search = function(q, distance, cb) {
 			});
 
 			x = t(q, distance);
-			resp = resp.concat(x);
+			if (x.length) resp.push({id: v.id, terms: x});
 		});
 		return cb(null, resp);
 	});
