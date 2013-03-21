@@ -46,10 +46,10 @@ The data parameter may be an emptry array if no match was found or an array cont
 
 ```javascript
 idx.search('youtube', 2, function(err, data) {
-	console.log(data)  // [ ['youtube', 0] ]
+	console.log(data)  // {id: 111, terms: [ ['youtube', 0] ], count: 1, query: 'youtube'}
 });
 
-idx.search('youtube', onResponse);
+idx.search('youtube videos', onResponse);
 ```
 
 For more information about the details behind Levenshtein Automata and how this module implements it visit dylon's [Levenshtein Automata](https://github.com/dylon/levenshtein_automata) Github page.
