@@ -88,7 +88,7 @@ Lev.prototype.search = function(q, distance, cb) {
 			});
 
 			x = t(q, distance);
-			resp.push(x);
+			resp = resp.concat(x);
 		});
 		return cb(null, resp);
 	});
