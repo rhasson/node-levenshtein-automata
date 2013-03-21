@@ -41,14 +41,14 @@ var lev = require('./lib/levenshtein');
 var Dawg = require('./lib/dawg');
 
 function Lev (args) {
-	if (args) {
-		this._algorithm = args.algorithm || 'transposition';
-		this._distance = args.distance || 2;
-		this._sort_matches = args.sort_matches || true;
-		this._include_distance = args.include_distance || true;
-		this._case_insensitive = args.case_insensitive || true;
-		this._store = [];
-	}
+	args = (typeof args === 'object') ? args : {};
+
+	this._algorithm = args.algorithm || 'transposition';
+	this._distance = args.distance || 2;
+	this._sort_matches = args.sort_matches || true;
+	this._include_distance = args.include_distance || true;
+	this._case_insensitive = args.case_insensitive || true;
+	this._store = [];
 }
 
 module.exports = Lev;
@@ -79,7 +79,7 @@ Lev.prototype.search = function(q, distance, cb) {
 	process.nextTick(function() {
 		_this._store.forEach(function(v) {
 			t = lev.transducer({
-				dictionary: v,
+				dictionary: v.dawg,
 				dictionary_type: 'dawg',
 				algorithm: _this._algorithm,
 				sort_matches: _this._sort_matches,
