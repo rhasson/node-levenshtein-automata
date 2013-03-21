@@ -10,7 +10,7 @@ var query2 = ['v', 'vi', 'vim', 'vimeo'];
 console.log('Start indexing');
 d = new Date().getTime();
 
-for (var i=0; i < 100000; i++) {
+for (var i=0; i < 10000; i++) {
 	l.index(doc, i);
 }
 

@@ -64,15 +64,16 @@ Lev.prototype.index = function(ary, id) {
 		ary.forEach(function(item) {
 			x = item.toLowerCase().split(' ');
 			x = x.filter(function(i) {
-				return stop_words(i);
+				return !stop_words(i);
 			});
+			console.log(x)
 			d = new Dawg(x);
 			_this._store.push({dawg: d, id: id || 0});
 		});
 	} else if (typeof ary === 'string') {
 		x = ary.toLowerCase().split(' ');
 		x = x.filter(function(i) {
-			return stop_words(i);
+			return !stop_words(i);
 		});
 		d = new Dawg(x);
 		_this._store.push({dawg: d, id: id || 0});
@@ -86,14 +87,14 @@ Lev.prototype.search = function(q, distance, cb) {
 		distance = _this._distance;
 	}
 
-	q = q.toLowerCase().split(' ');
-	if (q.length > 1) {
-		q = q.filter(function(i) {
-			return stop_words(i);
-		});
-	}
-
 	process.nextTick(function() {
+		q = q.toLowerCase().split(' ');
+		if (q.length > 1) {
+			q = q.filter(function(i) {
+				return !stop_words(i);
+			});
+		}
+
 		_this._store.forEach(function(v) {
 			t = lev.transducer({
 				dictionary: v.dawg,
