@@ -58,57 +58,61 @@ module.exports = Lev;
 Lev.prototype._levenshtein = lev;
 
 Lev.prototype.index = function(ary, id) {
-	var _this = this, d, x;
+	var _this = this, d, ds = [], x;
 
 	if (ary instanceof Array) {
 		ary.forEach(function(item) {
-			x = item.toLowerCase().split(' ');
-			x = x.filter(function(i) {
-				return !stop_words(i);
-			});
-			console.log(x)
+			x = _this.clean(item);
 			d = new Dawg(x);
-			_this._store.push({dawg: d, id: id || 0});
+			ds.push(d);
 		});
 	} else if (typeof ary === 'string') {
-		x = ary.toLowerCase().split(' ');
-		x = x.filter(function(i) {
-			return !stop_words(i);
-		});
+		x = _this.clean(ary)
 		d = new Dawg(x);
-		_this._store.push({dawg: d, id: id || 0});
+		ds.push(d);
 	}
+	_this._store.push({dawgs: ds, id: id || 0});
 }
 
 Lev.prototype.search = function(q, distance, cb) {
-	var _this = this, t, x, resp = [];
+	var _this = this, t, x, z = [], resp = [];
 	if (typeof distance === 'function') {
 		cb = distance;
 		distance = _this._distance;
 	}
 
 	process.nextTick(function() {
-		q = q.toLowerCase().split(' ');
-		if (q.length > 1) {
-			q = q.filter(function(i) {
-				return !stop_words(i);
-			});
-		}
+		q = _this.clean(q);
 
 		_this._store.forEach(function(v) {
-			t = lev.transducer({
-				dictionary: v.dawg,
-				dictionary_type: 'dawg',
-				algorithm: _this._algorithm,
-				sort_matches: _this._sort_matches,
-				include_distance: _this._include_distance,
-				case_insensitive: _this._case_insensitive
+			v.dawgs.forEach(function(d) {
+				t = lev.transducer({
+					dictionary: d,
+					dictionary_type: 'dawg',
+					algorithm: _this._algorithm,
+					sort_matches: _this._sort_matches,
+					include_distance: _this._include_distance,
+					case_insensitive: _this._case_insensitive
+				});
+				
+				q.forEach(function(i) {
+					x = t(i, distance);
+					z = z.concat(x);
+				});
 			});
-
-			x = t(q, distance);
-			if (x.length) resp.push({id: v.id, terms: x});
+			if (z.length) resp.push({id: v.id, terms: z, count: z.length, query: q});
+			z = [];
 		});
+
 		return cb(null, resp);
 	});
 }
 
+Lev.prototype.clean = function clean(str) {
+	var x = str.replace(/[/\/()\!\^\&\*\.\:\?]/ig,' ').toLowerCase().split(' ');
+	x = x.filter(function(i) {
+		return !stop_words(i);
+	});
+
+	return x;
+}
