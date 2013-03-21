@@ -14,9 +14,9 @@ There are four possible arguments that could be passed into the constructor as d
 1. algorithm: standard, transposition, or merge_and_split
 2. distance: a numberical value as default for maximum edit distance
 3. sort:
-  - sort_matches: true/false of whether to sort.  Sorting is done first according to the transduced terms' Levenshtein distances from the query term, then lexicographically, in a case insensitive manner
-  - include_distance: true/false of whether to include the levenshtein distance with the result
-  - case_insensitive: true/false of whether to sort in a case insensitive manner 
+  1. sort_matches: true/false of whether to sort.  Sorting is done first according to the transduced terms' Levenshtein distances from the query term, then lexicographically, in a case insensitive manner
+  2. include_distance: true/false of whether to include the levenshtein distance with the result
+  3. case_insensitive: true/false of whether to sort in a case insensitive manner 
 4. store: currently only supporting memory but in the future will support leveldb and redis
 
 ```javascript
