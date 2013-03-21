@@ -28,6 +28,7 @@ var idx = new lev({algorithm: 'transposition', distance: 2})
 ###Indexing
 Text input may be in the form of a string, array of strings or array of objects containing a "text" field with the string to parse and a "distance" field which would be the max edit distance.  If no distance is provided the default value of 2 will be used or the value which was passed to the constructor.
 
+```javascript
 var doc = [
 	{text: "some string to index", distance: 2},
 	{text: "I love surfing videos on @youtube", distance: 2},
@@ -57,4 +58,4 @@ idx.search('youtube', 2, function(err, data) {
 idx.search('youtube', onResponse);
 ```
 
-###For more information about the details behind Levenshtein Automata and how this module implements it visit dylon's [Levenshtein Automata](https://github.com/dylon/levenshtein_automata) Github page.
+For more information about the details behind Levenshtein Automata and how this module implements it visit dylon's [Levenshtein Automata](https://github.com/dylon/levenshtein_automata) Github page.
