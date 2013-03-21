@@ -38,20 +38,59 @@
 */
 
 var lev = require('./lib/levenshtein');
+var Dawg = require('./lib/dawg');
 
-function Lev () {}
-
-Lev.prototype.levenshtein = lev;
-
-Lev.prototype.index = function(ary) {
-	if (ary instanceof Array) {
-		ary.forEach(function(item) {
-			
-		});
+function Lev (args) {
+	if (args) {
+		this._algorithm = args.algorithm || 'transposition';
+		this._distance = args.distance || 2;
+		this._sort_matches = args.sort_matches || true;
+		this._include_distance = args.include_distance || true;
+		this._case_insensitive = args.case_insensitive || true;
+		this._store = [];
 	}
 }
 
-Lev.prototype.search = function() {
+module.exports = Lev;
 
+Lev.prototype._levenshtein = lev;
+
+Lev.prototype.index = function(ary, id) {
+	var _this = this, d;
+
+	if (ary instanceof Array) {
+		ary.forEach(function(item) {
+			d = new Dawg(item.split(' '));
+			_this._store.push({dawg: d, id: id || 0});
+		});
+	} else if (typeof ary === 'string') {
+		d = new Dawg(ary.split(' '));
+		_this._store.push({dawg: d, id: id || 0});
+	}
+}
+
+Lev.prototype.search = function(q, distance, cb) {
+	var _this = this, t, x, resp = [];
+	if (typeof distance === 'function') {
+		cb = distance;
+		distance = _this._distance;
+	}
+
+	process.nextTick(function() {
+		_this._store.forEach(function(v) {
+			t = lev.transducer({
+				dictionary: v,
+				dictionary_type: 'dawg',
+				algorithm: _this._algorithm,
+				sort_matches: _this._sort_matches,
+				include_distance: _this._include_distance,
+				case_insensitive: _this._case_insensitive
+			});
+
+			x = t(q, distance);
+			resp.push(x);
+		});
+		return cb(null, resp);
+	});
 }
 
