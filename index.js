@@ -72,6 +72,8 @@ Lev.prototype.index = function(ary, id) {
 		ds.push(d);
 	}
 	_this._store.push({dawgs: ds, id: id || 0});
+
+	return this;
 }
 
 Lev.prototype.search = function(q, distance, cb) {
@@ -106,6 +108,8 @@ Lev.prototype.search = function(q, distance, cb) {
 
 		return cb(null, resp);
 	});
+
+	return this;
 }
 
 Lev.prototype.clean = function clean(str) {
