@@ -50,33 +50,34 @@ function Lev (args) {
 	this._sort_matches = args.sort_matches || true;
 	this._include_distance = args.include_distance || true;
 	this._case_insensitive = args.case_insensitive || true;
-	this._store = [];
+	this._store = require('./lib/stores/memory');
 }
 
 module.exports = Lev;
 
 Lev.prototype._levenshtein = lev;
 
-Lev.prototype.index = function(ary, id) {
+Lev.prototype.index = function index(ary, id) {
 	var _this = this, d, ds = [], x;
 
 	if (ary instanceof Array) {
 		ary.forEach(function(item) {
-			x = _this.clean(item);
+			x = _this.tokenize(item);
 			d = new Dawg(x);
 			ds.push(d);
 		});
 	} else if (typeof ary === 'string') {
-		x = _this.clean(ary)
+		x = _this.tokenize(ary)
 		d = new Dawg(x);
 		ds.push(d);
 	}
-	_this._store.push({dawgs: ds, id: id || 0});
+	//_this._store.push({dawgs: ds, id: id || 0});
+	_this._store.set({dawgs: ds, id: id || 0});
 
 	return this;
 }
 
-Lev.prototype.search = function(q, distance, cb) {
+Lev.prototype.search = function search(q, distance, cb) {
 	var _this = this, t, x, z = [], resp = [];
 	if (typeof distance === 'function') {
 		cb = distance;
@@ -84,9 +85,9 @@ Lev.prototype.search = function(q, distance, cb) {
 	}
 
 	process.nextTick(function() {
-		q = _this.clean(q);
+		q = _this.tokenize(q);
 
-		_this._store.forEach(function(v) {
+		_this._store.each(function(v) {
 			v.dawgs.forEach(function(d) {
 				t = lev.transducer({
 					dictionary: d,
@@ -112,7 +113,7 @@ Lev.prototype.search = function(q, distance, cb) {
 	return this;
 }
 
-Lev.prototype.clean = function clean(str) {
+Lev.prototype.tokenize = function tokenize(str) {
 	var x = str.replace(/[/\/()\!\^\&\*\.\:\?]/ig,' ').toLowerCase().split(' ');
 	x = x.filter(function(i) {
 		return !stop_words(i);
