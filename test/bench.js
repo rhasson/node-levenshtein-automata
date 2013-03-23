@@ -17,7 +17,7 @@ for (var i=0; i < 10000; i++) {
 
 d1 = new Date().getTime();
 m1 = process.memoryUsage().heapUsed;
-console.log('End indexing - ', (d1 - d) / 1000, ' sec', '  index size: ', l._store.length, '  memory used: ', m1-m);
+console.log('End indexing - ', (d1 - d) / 1000, ' sec', '  index size: ', l._store.size(), '  memory used: ', m1-m);
 
 console.log('Start searching');
 m = process.memoryUsage().heapUsed;
