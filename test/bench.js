@@ -1,5 +1,7 @@
-var s = require('../index');
-var l = new s();
+var s = require('../index')
+	, store = require('../lib/stores/memory')
+	, l = new s({store: new store()})
+	, idx;
 
 var d,d1,m,m1;
 
@@ -11,13 +13,15 @@ console.log('Start indexing');
 m = process.memoryUsage().heapUsed;
 d = new Date().getTime();
 
+idx = l.createIndex('test');
+
 for (var i=0; i < 10000; i++) {
-	l.index(doc, i);
+	idx.index(doc, i);
 }
 
 d1 = new Date().getTime();
 m1 = process.memoryUsage().heapUsed;
-console.log('End indexing - ', (d1 - d) / 1000, ' sec', '  index size: ', l._store.size(), '  memory used: ', m1-m);
+console.log('End indexing - ', (d1 - d) / 1000, ' sec', '  index size: ', idx._store.size('test'), '  memory used: ', m1-m);
 
 console.log('Start searching');
 m = process.memoryUsage().heapUsed;
@@ -25,7 +29,7 @@ d = new Date().getTime();
 
 for (var i=0; i < 10000; i++) {
 	query.forEach(function(q) {
-		l.search(q, function(e,r){});
+		idx.search(q, function(e,r){});
 	});
 }
 
