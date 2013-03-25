@@ -10,7 +10,9 @@ npm install node-levenshtein-automata
 ```
 
 ###Instantiating the module:
-There are several possible arguments that could be passed into the constructor as defaults.
+When requiring the module a simple Factory Function will be returned allowing you to create
+a basic memory store and an index which will be used for loading text and searching.
+When creating the index there are several possible arguments that could be passed into the constructor.
 
 - algorithm: standard, transposition, or merge_and_split
 - distance: a numberical value as default for maximum edit distance, otherwise 1 is the default
@@ -20,13 +22,23 @@ There are several possible arguments that could be passed into the constructor a
 - store: currently only supporting memory but in the future will support leveldb and redis
 
 ```javascript
-var lev = require('node-levenshtein-automata');
+var lev = require('node-levenshtein-automata')
+	, memStore = lev.createMemoryStore()
+	, idx = lev.createIndex('twits', {store: memStore});
+```
+Creating a memory store as shown above will keep all indexes together in the same object.
+This requires that all index names (first argument to createIndex) are unique.
+If that is not desireable, simply omitting the "store" argument to createIndex will create
+a separate memory store per index.
 
-var idx = new lev({algorithm: 'transposition', distance: 2})
+Note: this is only applicable to MemoryStore
+
+```javascript
+var idx = lev.createIndex('twits');
 ```
 
 ###Indexing
-Text input may be in the form of a string, array of strings or array of objects containing a "text" field with the string to parse and a "distance" field which would be the max edit distance.  If no distance is provided the default value of 1 will be used or the value which was passed to the constructor.
+Text input may be in the form of a string or array of strings.  The second argument is an id.  It can be integer or string.
 
 ```javascript
 
@@ -36,13 +48,13 @@ var doc = [
 	"https://github.com/rhasson is pretty cool too"
 ]
 
-idx.index(doc);
-idx.index('this is another test string');
+idx.index(doc, 111);
+idx.index('this is another test string', "222333");
 ```
 
 ###Searching
-Search can be done by simply passing in the query term and optionally passing in the max edit distance for the particular query.  If not passed in the default provided in the constructor will be used.  Lastly a callback must be provided which will receive error and data arguments.
-The data parameter may be an emptry array if no match was found or an array containing one or more arrays with the term and its levenshtein distance
+Search can be done by simply passing in the query term and optionally passing in the max edit distance for the particular query.  Otherwise the default provided in the constructor will be used.  Lastly a callback must be provided which will receive error and data arguments.
+The data parameter may be an emptry array if no match was found or an array containing the id, one or more arrays with the term and its levenshtein distance, total count of matches, and the initial query term.
 
 ```javascript
 idx.search('youtube', 2, function(err, data) {
