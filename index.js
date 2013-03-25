@@ -37,14 +37,4 @@
 #
 */
 
-var Indexer = require('./lib/indexer');
-
-function LA (args) {
-	this._args = args;
-}
-
-module.exports = LA;
-
-LA.prototype.createIndex = function(name) {
-	return new Indexer(name, this._args);
-}
+module.exports = require('./lib/indexer');
