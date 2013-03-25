@@ -1,6 +1,5 @@
-var s = require('../index')
-	, store = require('../lib/stores/memory')
-	, lev = new s({store: new store()})
+var lev = require('../index')
+	, store = lev.createMemoryStore()
 	, d
 	, d1
 	, doc = ['this is a @vimeo test','another youtube test', 'http://vimeo.com/asfgaa', 'some other crap I dont care about']
@@ -8,10 +7,8 @@ var s = require('../index')
 	, idx1
 	, idx2;
 
-idx1 = lev.createIndex('test');
-idx2 = lev.createIndex('test2');
-
-console.log(idx1)
+idx1 = lev.createIndex('test', {store: store});
+idx2 = lev.createIndex('test2', {store: store});
 
 idx1
   .index(doc, 111)
@@ -32,4 +29,4 @@ idx2
 		console.log('idx2: ', r);
 	});
 
-console.log(idx1)
+console.log(store)

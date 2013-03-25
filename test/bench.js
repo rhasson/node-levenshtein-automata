@@ -1,6 +1,5 @@
 var s = require('../index')
-	, store = require('../lib/stores/memory')
-	, l = new s({store: new store()})
+	, store = s.createMemoryStore()
 	, idx;
 
 var d,d1,m,m1;
@@ -13,7 +12,7 @@ console.log('Start indexing');
 m = process.memoryUsage().heapUsed;
 d = new Date().getTime();
 
-idx = l.createIndex('test');
+idx = s.createIndex('test', {store: store});
 
 for (var i=0; i < 10000; i++) {
 	idx.index(doc, i);
