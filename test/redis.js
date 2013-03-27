@@ -1,5 +1,6 @@
 var lev = require('../index')
-	, store = lev.MemoryStore()
+	, RedisStore = lev.RedisStore()
+	, store = new RedisStore()
 	, d, d1, doc , doc2, idx1, idx2;
 
 doc = ['this is a @vimeo test','another youtube test', 'http://vimeo.com/asfgaa', 'some other crap I dont care about'];
@@ -26,5 +27,3 @@ idx2
 	.search('video', function(e,r) {
 		console.log('idx2: ', r);
 	});
-
-console.log('Memory store: ', store);

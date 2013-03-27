@@ -1,5 +1,6 @@
 var s = require('../index')
-	, store = s.MemoryStore()
+	, RedisStore = s.RedisStore()
+	, store = new RedisStore
 	, idx;
 
 var d,d1,m,m1;
@@ -14,19 +15,19 @@ d = new Date().getTime();
 
 idx = s.createIndex('test', {store: store});
 
-for (var i=0; i < 10000; i++) {
+for (var i=0; i < 1000; i++) {
 	idx.index(doc, i);
 }
 
 d1 = new Date().getTime();
 m1 = process.memoryUsage().heapUsed;
-console.log('End indexing - ', (d1 - d) / 1000, ' sec', '  index size: ', idx._store.size('test'), '  memory used: ', m1-m);
+console.log('End indexing - ', (d1 - d) / 1000, ' sec', '  memory used: ', m1-m);
 
 console.log('Start searching');
 m = process.memoryUsage().heapUsed;
 d = new Date().getTime();
 
-for (var i=0; i < 10000; i++) {
+for (var i=0; i < 1000; i++) {
 	query.forEach(function(q) {
 		idx.search(q, function(e,r){});
 	});
@@ -35,5 +36,3 @@ for (var i=0; i < 10000; i++) {
 d1 = new Date().getTime();
 m1 = process.memoryUsage().heapUsed;
 console.log('End searching - ', (d1 - d) / 1000, ' sec', '  memory used: ', m1-m);
-
-process.exit(1);  //needed if the search test is very large and you don't want to wait for the callback to return
