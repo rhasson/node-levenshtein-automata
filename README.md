@@ -42,8 +42,7 @@ Redis may be used as the backing store for indexing and searching.  Using RedisS
 
 ```javascript
 var lev = require('node-levenshtein-automata')
-	, RedisStore = lev.RedisStore()
-	, store = new RedisStore(args)  //args are redis specific arguments
+	, store = lev.RedisStore(args)  //args are redis specific arguments
 	, idx = lev.createIndex('twits', {store: store});
 ```
 
