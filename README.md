@@ -19,11 +19,11 @@ When creating the index there are several possible arguments that could be passe
 - sort_matches: true/false of whether to sort.  Sorting is done first according to the transduced terms' Levenshtein distances from the query term, then lexicographically, in a case insensitive manner
 - include_distance: true/false of whether to include the levenshtein distance with the result
 - case_insensitive: true/false of whether to sort in a case insensitive manner 
-- store: currently only supporting memory but in the future will support leveldb and redis
+- store: currently supporting memory and redis stores with leveldb in the works
 
 ```javascript
 var lev = require('node-levenshtein-automata')
-	, memStore = lev.createMemoryStore()
+	, memStore = lev.MemoryStore()
 	, idx = lev.createIndex('twits', {store: memStore});
 ```
 Creating a memory store as shown above will keep all indexes together in the same object.
@@ -35,6 +35,16 @@ Note: this is only applicable to MemoryStore
 
 ```javascript
 var idx = lev.createIndex('twits');
+```
+
+###Redis Store
+Redis may be used as the backing store for indexing and searching.  Using RedisStore is simple:
+
+```javascript
+var lev = require('node-levenshtein-automata')
+	, RedisStore = lev.RedisStore()
+	, store = new RedisStore(args)  //args are redis specific arguments
+	, idx = lev.createIndex('twits', {store: store});
 ```
 
 ###Indexing
