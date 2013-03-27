@@ -1,6 +1,6 @@
 {
   "name": "node-levenshtein-automata",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Node module for levenshtein automata",
   "main": "index.js",
   "scripts": {
