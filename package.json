@@ -12,5 +12,8 @@
     "automata"
   ],
   "author": "Roy Hasson",
-  "license": "BSD"
+  "license": "BSD",
+  "dependencies": {
+    "redis": "~0.8.2"
+  }
 }
